@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Halloween Trick or Treat Schoten 2026</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #120224;
+            --card-bg: #1f0836;
+            --primary-orange: #ff7518;
+            --accent-purple: #8a2be2;
+            --text-color: #f3e5f5;
+            --border-color: #4a148c;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-color);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(180deg, #000 0%, var(--bg-dark) 100%);
+            text-align: center;
+            padding: 20px 10px;
+            border-bottom: 2px solid var(--primary-orange);
+        }
+
+        .halloween-title {
+            font-family: 'Creepster', cursive;
+            font-size: 2.5rem;
+            color: var(--primary-orange);
+            margin: 0 0 5px 0;
+            text-shadow: 2px 2px 8px #000;
+        }
+
+        .event-date {
+            margin: 0 0 10px 0;
+            font-size: 1.1rem;
+            color: #d1c4e9;
+        }
+
+        .countdown-box {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #00ffcc;
+            background: rgba(0,0,0,0.6);
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--accent-purple);
+            margin-bottom: 15px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            background: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background: var(--primary-orange);
+            color: #000;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 850px) {
+            .grid-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+        }
+
+        #map {
+            height: 420px;
+            width: 100%;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            background: #000;
+            color: #fff;
+            border: 1px solid var(--accent-purple);
+            padding: 10px;
+            border-radius: 6px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .btn {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary { background: var(--primary-orange); color: #000; }
+        .btn-secondary { background: var(--accent-purple); color: #fff; }
+        .btn-danger { background: #d32f2f; color: #fff; }
+        .full-width { width: 100%; }
+
+        .houses-list {
+            list-style: none;
+            padding: 0;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+
+        .houses-list li {
+            background: rgba(255,255,255,0.05);
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .max-width-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checklist li {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+        }
+
+        .checklist input {
+            width: 18px;
+            height: 18px;
+            margin-right: 10px;
+        }
+
+        .hidden { display: none; }
+
+        .printable-poster {
+            background: #fff;
+            color: #000;
+            padding: 30px;
+            border: 8px double #ff7518;
+            text-align: center;
+            border-radius: 12px;
+        }
+
+        .printable-poster h1 {
+            font-family: 'Creepster', cursive;
+            font-size: 3rem;
+            color: #ff7518;
+            margin: 0;
+        }
+
+        @media print {
+            body * { visibility: hidden; }
+            #poster-area, #poster-area * { visibility: visible; }
+            #poster-area { position: absolute; left: 0; top: 0; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <h1 class="halloween-title">🎃 Trick or Treat Schoten</h1>
+        <p class="event-date">📅 Zaterdag 31 Oktober 2026</p>
+        <div id="countdown" class="countdown-box">
+            <span id="cd-days">00</span>d : 
+            <span id="cd-hours">00</span>u : 
+            <span id="cd-minutes">00</span>m : 
+            <span id="cd-seconds">00</span>s
+        </div>
+    </header>
+
+    <main class="container">
+        
+        <nav class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('map-tab')">🗺️ Kaart & Route</button>
+            <button class="tab-btn" onclick="switchTab('register-tab')">🏠 Huis Aanmelden</button>
+            <button class="tab-btn" onclick="switchTab('poster-tab')">🖨️ Poster Printen</button>
+            <button class="tab-btn" onclick="switchTab('checklist-tab')">✅ Checklist</button>
+        </nav>
+
+        <!-- MAP TAB -->
+        <section id="map-tab" class="tab-content active">
+            <div class="grid-layout">
+                <div class="card">
+                    <h2>🎃 Deelnemende Huizen in Schoten</h2>
+                    <p>Klik op een huis op de kaart om het toe te voegen aan je wandelroute!</p>
+                    <div id="map"></div>
+                </div>
+
+                <div class="card">
+                    <h2>🗺️ Mijn Route</h2>
+                    <ul id="route-list" class="houses-list">
+                        <li id="empty-route-msg">Nog geen huizen gekozen. Klik op een icoontje op de kaart!</li>
+                    </ul>
+                    <div id="route-info" class="hidden" style="margin-bottom: 15px;">
+                        <p><strong>Totale afstand:</strong> <span id="route-dist">0 km</span></p>
+                        <p><strong>Wandeltijd:</strong> <span id="route-time">0 min</span></p>
+                    </div>
+                    <button class="btn btn-primary full-width" onclick="calculateRoute()">✨ Route Berekenen</button>
+                    <button class="btn btn-danger full-width" style="margin-top: 8px;" onclick="clearRoute()">❌ Route Wissen</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- REGISTER TAB -->
+        <section id="register-tab" class="tab-content">
+            <div class="card max-width-form">
+                <h2>🏠 Doe mee met jouw huis!</h2>
+                <p>Vul je gegevens in. Je huis verschijnt direct op de kaart van Schoten!</p>
+                <form id="register-form" onsubmit="addHouse(event)">
+                    <div class="form-group">
+                        <label for="street">Straatnaam in Schoten *</label>
+                        <input type="text" id="street" required placeholder="bv. Paalstraat">
+                    </div>
+                    <div class="form-group">
+                        <label for="number">Huisnummer *</label>
+                        <input type="text" id="number" required placeholder="bv. 12">
+                    </div>
+                    <div class="form-group">
+                        <label for="hours">Welke uren zijn kinderen welkom? *</label>
+                        <input type="text" id="hours" required placeholder="bv. 17:00 - 20:00">
+                    </div>
+                    <div class="form-group">
+                        <label for="type">Soort deelname *</label>
+                        <select id="type" required>
+                            <option value="candy">🍬 Wij delen snoep uit</option>
+                            <option value="scare">👻 Huis is griezelig versierd</option>
+                            <option value="both">🎃 Snoep & Griezelig versierd!</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="info">Extra informatie voor bezoekers</label>
+                        <textarea id="info" placeholder="bv. Aanbellen bij de poort, allergievrij snoep aanwezig..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary full-width">🎃 Zet Mijn Huis Op De Kaart</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- POSTER TAB -->
+        <section id="poster-tab" class="tab-content">
+            <div class="card max-width-form">
+                <h2>🖨️ Hang deze poster aan je raam!</h2>
+                <p>Laat kinderen in de straat zien dat ze bij jouw huis welkom zijn.</p>
+                <div id="poster-area" class="printable-poster">
+                    <h1>TRICK OR TREAT!</h1>
+                    <p style="font-size: 1.5rem; font-weight: bold; margin: 15px 0;">🎃 HIER ZIJN GRIEZELS WELKOM! 👻</p>
+                    <p style="font-size: 1.1rem;">31 Oktober 2026 - Schoten</p>
+                </div>
+                <button class="btn btn-secondary full-width" style="margin-top: 15px;" onclick="window.print()">🖨️ Poster Printen</button>
+            </div>
+        </section>
+
+        <!-- CHECKLIST TAB -->
+        <section id="checklist-tab" class="tab-content">
+            <div class="card max-width-form">
+                <h2>✅ Halloween Checklist voor Onderweg</h2>
+                <ul class="checklist">
+                    <li><input type="checkbox" id="c1"><label for="c1">🎃 Enge of mooie Halloween outfit</label></li>
+                    <li><input type="checkbox" id="c2"><label for="c2">🛍️ Tas of emmertje voor snoep</label></li>
+                    <li><input type="checkbox" id="c3"><label for="c3">🔦 Zaklamp of lampje</label></li>
+                    <li><input type="checkbox" id="c4"><label for="c4">🦺 Fluohesje voor de veiligheid</label></li>
+                    <li><input type="checkbox" id="c5"><label for="c5">📱 Smartphone met je route op de kaart</label></li>
+                </ul>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        let map;
+        let houses = [];
+        let route = [];
+        let polyline = null;
+        const SCHOTEN = [51.2514, 4.4981];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            initCountdown();
+            initMap();
+        });
+
+        function initCountdown() {
+            const eventDate = new Date("October 31, 2026 17:00:00").getTime();
+            setInterval(() => {
+                const now = new Date().getTime();
+                const diff = eventDate - now;
+                if (diff > 0) {
+                    document.getElementById("cd-days").innerText = String(Math.floor(diff / (1000 * 60 * 60 * 24))).padStart(2, '0');
+                    document.getElementById("cd-hours").innerText = String(Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+                    document.getElementById("cd-minutes").innerText = String(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+                    document.getElementById("cd-seconds").innerText = String(Math.floor((diff % (1000 * 60)) / 1000)).padStart(2, '0');
+                }
+            }, 1000);
+        }
+
+        function initMap() {
+            map = L.map('map').setView(SCHOTEN, 14);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap'
+            }).addTo(map);
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+
+            if (tabId === 'map-tab') {
+                setTimeout(() => map.invalidateSize(), 200);
+            }
+        }
+
+        async function addHouse(e) {
+            e.preventDefault();
+            const street = document.getElementById('street').value;
+            const number = document.getElementById('number').value;
+            const hours = document.getElementById('hours').value;
+            const info = document.getElementById('info').value;
+
+            const query = `${street}${number}, 2900 Schoten, België`;
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+                const data = await res.json();
+
+                let lat = SCHOTEN[0];
+                let lng = SCHOTEN[1];
+
+                if (data.length > 0) {
+                    lat = parseFloat(data[0].lat);
+                    lng = parseFloat(data[0].lon);
+                }
+
+                const house = { id: Date.now(), title: `${street}${number}`, hours, info, lat, lng };
+                houses.push(house);
+
+                const marker = L.marker([lat, lng]).addTo(map);
+                marker.bindPopup(`
+                    <b>${house.title}</b><br>
+                    🕒 ${house.hours}<br>${house.info}<br><br>
+                    <button class="btn btn-primary" style="padding: 4px 8px; font-size: 0.8rem;" onclick="addToRoute(${house.id})">➕ Voeg toe aan route</button>
+                `);
+
+                alert("🎉 Je huis is succesvol toegevoegd aan de kaart!");
+                document.getElementById('register-form').reset();
+                switchTab('map-tab');
+
+            } catch (err) {
+                alert("Er ging iets mis bij het zoeken van de locatie. Probeer opnieuw.");
+            }
+        }
+
+        function addToRoute(id) {
+            const house = houses.find(h => h.id === id);
+            if (!house) return;
+            if (route.some(r => r.id === id)) {
+                alert("Dit huis staat al in je route!");
+                return;
+            }
+            route.push(house);
+            updateRouteUI();
+        }
+
+        function updateRouteUI() {
+            const list = document.getElementById('route-list');
+            list.innerHTML = '';
+            if (route.length === 0) {
+                list.innerHTML = '<li id="empty-route-msg">Nog geen huizen gekozen. Klik op een icoontje op de kaart!</li>';
+                return;
+            }
+            route.forEach((h, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `<span>${index + 1}.${h.title}</span> <button class="btn btn-danger" style="padding:2px 6px; font-size:0.7rem;" onclick="removeFromRoute(${h.id})">❌</button>`;
+                list.appendChild(li);
+            });
+        }
+
+        function removeFromRoute(id) {
+            route = route.filter(r => r.id !== id);
+            updateRouteUI();
+            if (polyline) map.removeLayer(polyline);
+            document.getElementById('route-info').classList.add('hidden');
+        }
+
+        function clearRoute() {
+            route = [];
+            updateRouteUI();
+            if (polyline) map.removeLayer(polyline);
+            document.getElementById('route-info').classList.add('hidden');
+        }
+
+        function calculateRoute() {
+            if (route.length < 2) {
+                alert("Selecteer minstens 2 huizen om een route te berekenen!");
+                return;
+            }
+
+            const points = route.map(r => [r.lat, r.lng]);
+            if (polyline) map.removeLayer(polyline);
+
+            polyline = L.polyline(points, { color: '#ff7518', weight: 5 }).addTo(map);
+            map.fitBounds(polyline.getBounds());
+
+            let totalDist = 0;
+            for (let i = 0; i < points.length - 1; i++) {
+                totalDist += map.distance(points[i], points[i+1]);
+            }
+
+            const distKm = (totalDist / 1000).toFixed(2);
+            const minutes = Math.round((totalDist / 1000) / 4 * 60);
+
+            document.getElementById('route-dist').innerText = `${distKm} km`;
+            document.getElementById('route-time').innerText = `${minutes} min`;
+            document.getElementById('route-info').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
